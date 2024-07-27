@@ -1,0 +1,21 @@
+{
+  "name": "tsx-watch-issue-repro",
+  "private": "true",
+  "type": "module",
+  "scripts": {
+    "check": "echo \"All checks are passed\"",
+    "issue": "concurrently \"tsx watch ./src/index.ts\" \"npm run check\"",
+    "noIssue1": "tsx watch ./src/index.ts",
+    "noIssue2": "concurrently \"tsx ./src/index.ts\" \"npm run check\"",
+    "noIssue3": "concurrently \"tsx watch ./src/index.ts < NUL\" \"npm run check\""
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "concurrently": "^8.2.2",
+    "googleapis": "^140.0.1",
+    "prom-client": "^14.2.0",
+    "swagger-stats": "^0.99.7",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
+  }
+}
