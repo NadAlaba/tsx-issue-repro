@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  repro-for-module-using-i:
+  repro-for-module:
     strategy:
       matrix:
         module: [chalk, prom-client, swagger-stats, googleapis]
@@ -25,64 +25,28 @@ jobs:
 
       - name: Run tsx watch (npm run tsxWatch --module=<module>)
         run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run tsxWatch --module=${{ matrix.module }}}
+          $job=Start-Job -ScriptBlock {npm run tsxWatch --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm-script-output=$job | receive-job
+          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
       
       - name: Run concurrently with tsx without watch
         run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run concurrently-without-watch --module=${{ matrix.module }}}
+          $job=Start-Job -ScriptBlock {npm run concurrently-without-watch --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm-script-output=$job | receive-job
+          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
       - name: Run concurrently with tsx watch windows-hack
         run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently-hack --module=${{ matrix.module }}}
+          $job=Start-Job -ScriptBlock {npm run watch-with-concurrently-hack --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm-script-output=$job | receive-job
+          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
       - name: Run issue causing script (concurrently with tsx watch)
         run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently --module=${{ matrix.module }}}
+          $job=Start-Job -ScriptBlock {npm run watch-with-concurrently --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
-
-  repro-for-module-using-ci:
-    strategy:
-      matrix:
-        module: [chalk, prom-client, swagger-stats, googleapis]
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18.20.4"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tsx watch (npm run tsxWatch --module=<module>)
-        run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run tsxWatch --module=${{ matrix.module }}}
-          $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
-      
-      - name: Run concurrently with tsx without watch
-        run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run concurrently-without-watch --module=${{ matrix.module }}}
-          $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
-
-      - name: Run concurrently with tsx watch windows-hack
-        run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently-hack --module=${{ matrix.module }}}
-          $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
-
-      - name: Run issue causing script (concurrently with tsx watch)
-        run: |
-          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently --module=${{ matrix.module }}}
-          $job | Wait-Job -Timeout 15
-          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm-script-output=$job | receive-job
+          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
