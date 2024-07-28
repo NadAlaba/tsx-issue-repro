@@ -1,5 +1,8 @@
 name: Scripts with no issue
 
+env:
+  TIMEOUT: 15
+
 on:
   workflow_dispatch:
 
@@ -25,7 +28,7 @@ jobs:
       - name: Run tsx watch (npm run tsxWatch --module=<module>)
         run: |
           $job=Start-Job -ScriptBlock {npm run tsxWatch --module=${{ matrix.module }}}
-          $job | Wait-Job -Timeout 15 | Out-Null
+          $job | Wait-Job -Timeout ${{ env.TIMEOUT }} | Out-Null
           $npm_script_output=$job | Receive-Job
           echo $npm_script_output
           If($npm_script_output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
@@ -33,7 +36,7 @@ jobs:
       - name: Run concurrently with tsx without watch (npm run concurrently-without-watch --module=<module>})
         run: |
           $job=Start-Job -ScriptBlock {npm run concurrently-without-watch --module=${{ matrix.module }}}
-          $job | Wait-Job -Timeout 15 | Out-Null
+          $job | Wait-Job -Timeout ${{ env.TIMEOUT }} | Out-Null
           $npm_script_output=$job | Receive-Job
           echo $npm_script_output
           If($npm_script_output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
@@ -41,7 +44,7 @@ jobs:
       - name: Run concurrently with tsx watch windows-hack (npm run watch-with-concurrently-hack --module=<module>)
         run: |
           $job=Start-Job -ScriptBlock {npm run watch-with-concurrently-hack --module=${{ matrix.module }}}
-          $job | Wait-Job -Timeout 15 | Out-Null
+          $job | Wait-Job -Timeout ${{ env.TIMEOUT }} | Out-Null
           $npm_script_output=$job | Receive-Job
           echo $npm_script_output
           If($npm_script_output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
