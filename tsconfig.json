@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext"
-  },
-  "include": ["./src/**/*"],
-}
