@@ -23,21 +23,29 @@ jobs:
       - name: Install module
         run: npm install ${{ matrix.module }}
 
-      - name: Run tsx watch
-        run: npm run tsxWatch --module=${{ matrix.module }}
-        timeout-minutes: 1
+      - name: Run tsx watch (npm run tsxWatch --module=<module>)
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run tsxWatch --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
       
       - name: Run concurrently with tsx without watch
-        run: npm run concurrently-without-watch --module=${{ matrix.module }}
-        timeout-minutes: 0.5
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run concurrently-without-watch --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
       - name: Run concurrently with tsx watch windows-hack
-        run: npm run watch-with-concurrently-hack --module=${{ matrix.module }}
-        timeout-minutes: 0.25
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently-hack --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
       - name: Run issue causing script (concurrently with tsx watch)
-        run: npm run watch-with-concurrently --module=${{ matrix.module }}
-        timeout-minutes: 1
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
   repro-for-module-using-ci:
     strategy:
@@ -55,14 +63,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tsx watch
-        run: npm run tsxWatch --module=${{ matrix.module }}
+      - name: Run tsx watch (npm run tsxWatch --module=<module>)
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run tsxWatch --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
       
       - name: Run concurrently with tsx without watch
-        run: npm run concurrently-without-watch --module=${{ matrix.module }}
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run concurrently-without-watch --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
       - name: Run concurrently with tsx watch windows-hack
-        run: npm run watch-with-concurrently-hack --module=${{ matrix.module }}
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently-hack --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
       - name: Run issue causing script (concurrently with tsx watch)
-        run: npm run watch-with-concurrently --module=${{ matrix.module }}
+        run: |
+          $job=Start-Job -ScriptBlock {Set-Location $using:PWD; npm run watch-with-concurrently --module=${{ matrix.module }}}
+          $job | Wait-Job -Timeout 15
+          If($job | receive-job -Keep | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
