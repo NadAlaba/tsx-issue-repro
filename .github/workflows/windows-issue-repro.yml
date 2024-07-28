@@ -3,12 +3,8 @@ name: Reproduce tsx watch issue
 on:
   workflow_dispatch:
 
-concurrency:
-  group: group-${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
-
 jobs:
-  issue-for-all-modules:
+  repro-for-module:
     strategy:
       matrix:
         module: [chalk@^5.3.0, prom-client@^14.2.0, swagger-stats@^0.99.7, googleapis@^140.0.1]
@@ -25,16 +21,16 @@ jobs:
         run: npm install
 
       - name: Install module
-        run: npm install matrix.module
+        run: npm install ${{ matrix.module }}
 
       - name: Run tsx watch
-        run: npm run tsxWatch --module=matrix.module
+        run: npm run tsxWatch --module=${{ matrix.module }}
       
       - name: Run concurrently with tsx without watch
-        run: npm run concurrently-without-watch --module=matrix.module
+        run: npm run concurrently-without-watch --module=${{ matrix.module }}
 
       - name: Run concurrently with tsx watch windows-hack
-        run: npm run watch-with-concurrently-hack --module=matrix.module
+        run: npm run watch-with-concurrently-hack --module=${{ matrix.module }}
 
       - name: Run issue causing script (concurrently with tsx watch)
-        run: npm run watch-with-concurrently --module=matrix.module
+        run: npm run watch-with-concurrently --module=${{ matrix.module }}
