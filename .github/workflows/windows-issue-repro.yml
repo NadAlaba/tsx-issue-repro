@@ -27,26 +27,30 @@ jobs:
         run: |
           $job=Start-Job -ScriptBlock {npm run tsxWatch --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          $npm-script-output=$job | receive-job
-          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm_script_output=$job | receive-job
+          echo $npm_script_output
+          If($npm_script_output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
       
-      - name: Run concurrently with tsx without watch
+      - name: Run concurrently with tsx without watch (npm run concurrently-without-watch --module=<module>})
         run: |
           $job=Start-Job -ScriptBlock {npm run concurrently-without-watch --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          $npm-script-output=$job | receive-job
-          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm_script_output=$job | receive-job
+          echo $npm_script_output
+          If($npm_script_output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
-      - name: Run concurrently with tsx watch windows-hack
+      - name: Run concurrently with tsx watch windows-hack (npm run watch-with-concurrently-hack --module=<module>)
         run: |
           $job=Start-Job -ScriptBlock {npm run watch-with-concurrently-hack --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          $npm-script-output=$job | receive-job
-          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm_script_output=$job | receive-job
+          echo $npm_script_output
+          If($npm_script_output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
 
-      - name: Run issue causing script (concurrently with tsx watch)
+      - name: Run issue causing script (concurrently with tsx watch) (npm run watch-with-concurrently --module=<module>)
         run: |
           $job=Start-Job -ScriptBlock {npm run watch-with-concurrently --module=${{ matrix.module }}}
           $job | Wait-Job -Timeout 15
-          $npm-script-output=$job | receive-job
-          If($npm-script-output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
+          $npm_script_output=$job | receive-job
+          echo $npm_script_output
+          If($npm_script_output | Select-String "Everything is fine!" -Quiet){exit 0}Else{exit 1}
