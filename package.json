@@ -11,8 +11,14 @@
     "concurrently-without-watch": "concurrently \"npm run expect\" \"npm run tsx\"",
     "watch-with-concurrently-hack": "concurrently \"npm run expect\" \"npm run tsxWatchHack\""
   },
-  "dependencies": {
+  "devDependencies": {
     "concurrently": "^8.2.2",
     "tsx": "^4.16.2"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "googleapis": "^140.0.1",
+    "prom-client": "^14.2.0",
+    "swagger-stats": "^0.99.7"
   }
 }

@@ -4,10 +4,41 @@ on:
   workflow_dispatch:
 
 jobs:
-  repro-for-module:
+  repro-for-module-using-i:
     strategy:
       matrix:
-        module: [chalk@^5.3.0, prom-client@^14.2.0, swagger-stats@^0.99.7, googleapis@^140.0.1]
+        module: [chalk, prom-client, swagger-stats, googleapis]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.20.4"
+
+      - name: Install dev dependencies
+        run: npm install tsx concurrently
+
+      - name: Install module
+        run: npm install ${{ matrix.module }}
+
+      - name: Run tsx watch
+        run: npm run tsxWatch --module=${{ matrix.module }}
+      
+      - name: Run concurrently with tsx without watch
+        run: npm run concurrently-without-watch --module=${{ matrix.module }}
+
+      - name: Run concurrently with tsx watch windows-hack
+        run: npm run watch-with-concurrently-hack --module=${{ matrix.module }}
+
+      - name: Run issue causing script (concurrently with tsx watch)
+        run: npm run watch-with-concurrently --module=${{ matrix.module }}
+
+  repro-for-module-using-ci:
+    strategy:
+      matrix:
+        module: [chalk, prom-client, swagger-stats, googleapis]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,10 +49,7 @@ jobs:
           node-version: "18.20.4"
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Install module
-        run: npm install ${{ matrix.module }}
+        run: npm ci
 
       - name: Run tsx watch
         run: npm run tsxWatch --module=${{ matrix.module }}
